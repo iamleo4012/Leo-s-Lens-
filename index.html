@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leo's Lens📸</title>
+  <style>
+    :root {
+      --bg-color: #000;
+      --text-color: white;
+      --accent-color: #fff;
+      --gap-size: 12px;
+      --transition-speed: 0.3s;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, 
+                  Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg-color);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-button {
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--accent-color);
+      transition: opacity var(--transition-speed);
+    }
+
+    .nav-button:hover {
+      opacity: 0.8;
+    }
+
+    /* Profile Section */
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-name {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .profile-bio {
+      font-size: 0.9rem;
+      color: #ccc;
+      text-align: center;
+      max-width: 300px;
+      line-height: 1.4;
+    }
+
+    /* Gallery Layout */
+    .gallery {
+      display: flex;
+      gap: var(--gap-size);
+      padding: var(--gap-size);
+    }
+
+    .gallery-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap-size);
+    }
+
+    /* Image Card */
+    .image-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform var(--transition-speed) ease;
+      box-shadow: var(--shadow);
+    }
+
+    .image-wrapper:hover {
+      transform: scale(0.98);
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      transition: transform var(--transition-speed) ease;
+    }
+
+    .image-wrapper:hover img {
+      transform: scale(1.05);
+    }
+
+    /* Ripple Effect */
+    .ripple {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: scale(0);
+      animation: ripple-effect 0.6s ease-out forwards;
+    }
+
+    @keyframes ripple-effect {
+      to {
+        transform: scale(10);
+        opacity: 0;
+      }
+    }
+
+    /* Single Image View */
+    .single-view {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: var(--bg-color);
+      z-index: 999;
+      overflow-y: auto;
+      padding-top: 60px; /* Space for top bar */
+    }
+
+    .single-image {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .single-image img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      transition: transform var(--transition-speed);
+    }
+
+    .single-image img:hover {
+      transform: scale(1.02);
+    }
+
+    .caption-container {
+      padding: 24px 16px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #ccc;
+      opacity: 0.8;
+      border-top: 1px solid #222;
+      margin-top: 16px;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Carousel Navigation */
+    .carousel-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1001;
+      transition: background var(--transition-speed);
+    }
+
+    .carousel-nav:hover {
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .carousel-left {
+      left: 20px;
+    }
+
+    .carousel-right {
+      right: 20px;
+    }
+
+    /* Close Button for Single View */
+    .close-button {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 1002;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--accent-color);
+      transition: opacity var(--transition-speed);
+      background: rgba(0, 0, 0, 0.4);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-button:hover {
+      opacity: 0.8;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .top-bar {
+        padding: 12px;
+      }
+      
+      .profile-section {
+        padding: 16px;
+      }
+      
+      .profile-pic {
+        width: 70px;
+        height: 70px;
+      }
+      
+      .profile-name {
+        font-size: 1.1rem;
+      }
+      
+      .profile-bio {
+        font-size: 0.85rem;
+        max-width: 90%;
+      }
+      
+      .gallery {
+        padding: 8px;
+        gap: 8px;
+      }
+      
+      .gallery-column {
+        gap: 8px;
+      }
+      
+      .carousel-nav {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .carousel-left {
+        left: 10px;
+      }
+      
+      .carousel-right {
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <div class="top-bar">
+    <div class="nav-button" id="backBtn">←</div>
+    <div style="width: 24px;"></div> <!-- Empty space to keep alignment -->
+  </div>
+
+  <!-- Profile Section -->
+  <div class="profile-section">
+    <img src="pics/profile.jpg" alt="Profile" class="profile-pic">
+    <div class="profile-name">ＬＥＯ ＪＯＳＥＰＨ</div>
+    <div class="profile-bio">
+  <div>𝖢𝖺𝗉𝗍𝗎𝗋𝗂𝗇𝗀 𝖼𝗈𝗅𝗈𝗋𝗌, 𝖾𝗆𝗈𝗍𝗂𝗈𝗇𝗌, 𝖺𝗇𝖽 𝗌𝗍𝗂𝗅𝗅𝗇𝖾𝗌𝗌</div>
+  <div>M𝗈𝗆𝖾𝗇𝗍𝗌 𝗍𝗁𝖺𝗍 𝗍𝖾𝗅𝗅 𝗌𝗍𝗈𝗋𝗂𝖾𝗌</div>
+</div>
+  </div>
+
+  <!-- Gallery Grid -->
+  <div class="gallery" id="gallery">
+    <div class="gallery-column" id="leftColumn"></div>
+    <div class="gallery-column" id="rightColumn"></div>
+  </div>
+
+  <!-- Single Image View -->
+  <div class="single-view" id="singleView">
+    <!-- Close Button -->
+    <div class="close-button" id="closeBtn">×</div>
+    
+    <!-- Carousel Navigation -->
+    <div class="carousel-nav carousel-left" id="prevBtn">←</div>
+    <div class="carousel-nav carousel-right" id="nextBtn">→</div>
+    
+    <div class="single-image">
+      <img id="fullImage" src="" alt="">
+      <div class="caption-container" id="imageCaption"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sample image data
+    const imageData = [
+      { 
+    id: 1, 
+    url: 'pics/Snapseed (4).jpg', 
+    caption: 'Timeless textures, rustic tones — a quiet story told without a single word. 🐪🇰🇼✨' 
+  },
+      { id: 2, url: 'pics/Snapseed (3).jpg ', caption: 'When elegance framed in gold meets dim-lit stories untold⚜📜🕯' },
+      { id: 3, url: 'pics/FullSizeRender (8).jpg ', caption: 'Beneath a kaleidoscope ceiling, the fountain sings in silence. ✨🏛🌌' },
+      { id: 4, url: 'pics/FullSizeRender (7).jpg  ', caption: 'Renaissance vibes, reimagined in cyan. 🫧🗿🤎🎞' },
+      { id: 5, url: 'pics/Snapseed (2).jpg ', caption: 'Faded tales through lenses, time rests on velvet and ink. 🕰🪞🥀📜✨' },
+      { id: 6, url: 'pics/Snapseed (1).jpg ', caption: 'Golden dreams draped in art, blooms, and timeless elegance.⚜✨🥀' },
+      { id: 7, url: 'pics/FullSizeRender (6).jpg ', caption: 'Chiseled by time, silent in thought — a marble mood eternal. 🍂🗿🖤' },
+      { id: 8, url: 'pics/FullSizeRender (9).jpg  ', caption: '6 scoops. 6 moods. summer melting into memories.🍦✨' },
+      { id: 9, url: 'pics/IMG_4624.JPG ', caption: 'Every slice is a love letter to my taste buds. 🍕🤤' },
+      { id: 10, url: 'pics/FullSizeRender (3).jpg', caption: 'Where water whispers secrets only nature knows. 🌿✨' },
+  { id: 11, url: 'pics/IMG_4625.JPG ', caption: 'Wildflowers bloom quietly as mountains fade into the mist.☁✨' },
+  { id: 12, url: 'pics/IMG_4623.JPG', caption: 'Where every embrace whispers love and safety. 🐒🤎' },
+  { id: 13, url: 'pics/IMG_3953.JPG', caption: 'Grace wrapped in petals and ribbons — a soft moment from a blessed baptism day.' },
+  { id: 14, url: 'pics/IMG_3808.JPG', caption: 'Just me, the silence, and a sky that doesn’t need stars.' },
+  { id: 15, url: 'pics/IMG_0477.JPG', caption: 'Soft blooms, cool hues, and quiet corners — where time slows down and colors speak🥀.' },
+  { id: 16, url: 'pics/IMG_4699.JPG', caption: 'Raindrops linger, blurring greens and blues into quiet calm.' },
+  { id: 17, url: 'pics/IMG_5871.JPG', caption: 'Where colors dance and stories breathe — Kerala’s timeless spirit in a frame.' },
+  { id: 18, url: 'pics/IMG_3922.JPG', caption: 'Somewhere between earth and monochrome skies, where time slows down and thoughts get lighter.' },
+  { id: 19, url: 'pics/Snapseed (5).jpg', caption: 'Tea gardens kissed by morning mist☀.' },
+  { id: 20, url: 'pics/IMG_0496.JPG', caption: 'A slice of happiness layered with red velvet & cheesecake magic🍰 — sweet moments.' },
+  { id: 21, url: 'pics/IMG_2700.JPG', caption: 'Chasing the sunrise, one altitude at a time. Golden horizons and quiet skies.' },
+  { id: 22, url: 'pics/IMG_3727.JPG', caption: 'Drenched in purple dreams — where every bloom whispers calm and chaos all at once.' },
+  { id: 23, url: 'pics/IMG_4622.JPG', caption: 'Golden tuskers🐘, burning flames, and beats of tradition — Thrissur Pooram magic captured.' },
+  { id: 24, url: 'pics/Snapseed.jpg', caption: 'Signed by the sea, sealed with a wave. 🌊✍️☀️' },
+  { id: 25, url: 'pics/IMG_4605.JPG', caption: 'Spinning stories under a sunset sky—where the sea listens and the lights begin to sing. 🌇🎡💫' },
+  { id: 26, url: 'pics/FullSizeRender.jpg', caption: 'Cruising altitude comfort. ✈️😴🎶' },
+  { id: 27, url: 'pics/IMG_4573.JPG', caption: 'Rain on the runway, wanderlust in my veins. 🛫🌧️🌍 ' },
+  { id: 28, url: 'pics/FullSizeRender (2).jpg', caption: 'Caught him living the sweet life. 🍦🙈🌿' }
+  
+  
+    ];
+
+    let scrollPosition = 0;
+    let isSingleView = false;
+    let currentIndex = 0;
+
+    // DOM elements
+    const leftColumn = document.getElementById('leftColumn');
+    const rightColumn = document.getElementById('rightColumn');
+    const singleView = document.getElementById('singleView');
+    const fullImage = document.getElementById('fullImage');
+    const imageCaption = document.getElementById('imageCaption');
+    const backBtn = document.getElementById('backBtn');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // Create image element
+    function createImageElement(item, index) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'image-wrapper';
+      
+      // Skeleton loader
+      const skeleton = document.createElement('div');
+      skeleton.style.width = '100%';
+      skeleton.style.aspectRatio = '3/4';
+      skeleton.style.background = 'linear-gradient(90deg, #222 25%, #333 50%, #222 75%)';
+      skeleton.style.backgroundSize = '400% 400%';
+      skeleton.style.animation = 'shimmer 1.5s infinite linear';
+      skeleton.style.borderRadius = '12px';
+      wrapper.appendChild(skeleton);
+      
+      // Image element
+      const img = document.createElement('img');
+      img.src = item.url;
+      img.alt = `Image ${item.id}`;
+      img.dataset.index = index;
+      img.style.display = 'none';
+      
+      // Handle image load
+      img.onload = () => {
+        skeleton.remove();
+        img.style.display = 'block';
+        wrapper.appendChild(img);
+      };
+      
+      // Ripple effect
+      wrapper.addEventListener('click', (e) => {
+        const rect = wrapper.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('div');
+        ripple.className = 'ripple';
+        ripple.style.left = `${x - 10}px`;
+        ripple.style.top = `${y - 10}px`;
+        wrapper.appendChild(ripple);
+        
+        ripple.addEventListener('animationend', () => {
+          ripple.remove();
+        });
+        
+        showSingleView(index);
+      });
+      
+      return wrapper;
+    }
+
+    // Render gallery
+    function renderGallery() {
+      leftColumn.innerHTML = '';
+      rightColumn.innerHTML = '';
+      
+      imageData.forEach((item, index) => {
+        const wrapper = createImageElement(item, index);
+        
+        // Alternate between columns
+        if (index % 2 === 0) {
+          leftColumn.appendChild(wrapper);
+        } else {
+          rightColumn.appendChild(wrapper);
+        }
+      });
+    }
+
+    // Show single image view
+    function showSingleView(index) {
+      currentIndex = index;
+      scrollPosition = window.scrollY;
+      isSingleView = true;
+      
+      // Hide gallery and show full view
+      document.body.style.overflow = 'hidden'; // Prevent body scroll
+      singleView.style.display = 'block';
+      singleView.scrollTop = 0; // Reset scroll position
+      
+      const item = imageData[index];
+      fullImage.src = item.url;
+      imageCaption.textContent = item.caption;
+      
+      // Animate image in
+      fullImage.style.opacity = 0;
+      fullImage.style.transform = 'scale(0.9)';
+      requestAnimationFrame(() => {
+        fullImage.style.opacity = 1;
+        fullImage.style.transform = 'scale(1)';
+      });
+      
+      history.pushState({ view: 'single', index }, '', `?image=${item.id}`);
+    }
+
+    // Return to gallery
+    function returnToGallery() {
+      isSingleView = false;
+      document.body.style.overflow = ''; // Restore body scroll
+      singleView.style.display = 'none';
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollPosition);
+      
+      history.pushState({ view: 'gallery' }, '', window.location.pathname);
+    }
+
+    // Navigate to previous/next image
+    function navigateImage(direction) {
+      let newIndex = currentIndex + direction;
+      if (newIndex >= 0 && newIndex < imageData.length) {
+        showSingleView(newIndex);
+      }
+    }
+
+    // Handle swipe gestures
+    function handleTouchStart(e) {
+      if (isSingleView) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isSwiping = true;
+      }
+    }
+
+    function handleTouchMove(e) {
+      if (!isSwiping) return;
+      
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = Math.abs(e.touches[0].clientY - startY);
+      
+      if (Math.abs(deltaX) > 30 && deltaY < 30) {
+        if (deltaX > 0) {
+          navigateImage(-1); // Swipe right to go back
+        } else {
+          navigateImage(1); // Swipe left to go forward
+        }
+        isSwiping = false;
+      }
+    }
+
+    function handleTouchEnd() {
+      isSwiping = false;
+    }
+
+    // Event listeners
+    backBtn.addEventListener('click', returnToGallery);
+    closeBtn.addEventListener('click', returnToGallery);
+
+    // Carousel navigation
+    document.getElementById('prevBtn').addEventListener('click', () => navigateImage(-1));
+    document.getElementById('nextBtn').addEventListener('click', () => navigateImage(1));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (isSingleView) {
+        if (e.key === 'ArrowLeft') navigateImage(-1);
+        if (e.key === 'ArrowRight') navigateImage(1);
+        if (e.key === 'Escape') returnToGallery();
+      }
+    });
+
+    // Touch event listeners
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+
+    // Handle browser back/forward navigation
+    window.addEventListener('popstate', (event) => {
+      if (event.state?.view === 'gallery') {
+        returnToGallery();
+      } else if (event.state?.view === 'single') {
+        showSingleView(event.state.index);
+      }
+    });
+
+    // Initialize on load
+    window.addEventListener('load', renderGallery);
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+      if (!isSingleView) {
+        const tempLeft = Array.from(leftColumn.children);
+        const tempRight = Array.from(rightColumn.children);
+        
+        leftColumn.innerHTML = '';
+        rightColumn.innerHTML = '';
+        
+        [...tempLeft, ...tempRight].forEach((child, index) => {
+          if (index % 2 === 0) {
+            leftColumn.appendChild(child);
+          } else {
+            rightColumn.appendChild(child);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

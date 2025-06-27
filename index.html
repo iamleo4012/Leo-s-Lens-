@@ -108,6 +108,7 @@
       border-radius: 12px;
       transition: transform var(--transition-speed) ease;
       box-shadow: var(--shadow);
+      aspect-ratio: 3/4;
     }
 
     .image-wrapper:hover {
@@ -116,7 +117,7 @@
 
     .image-wrapper img {
       width: 100%;
-      height: auto;
+      height: 100%;
       display: block;
       object-fit: cover;
       transition: transform var(--transition-speed) ease;
@@ -124,6 +125,12 @@
 
     .image-wrapper:hover img {
       transform: scale(1.05);
+    }
+
+    /* Shimmer animation for loading */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
     }
 
     /* Ripple Effect */
@@ -304,9 +311,9 @@
     <img src="pics/profile.jpg" alt="Profile" class="profile-pic">
     <div class="profile-name">ＬＥＯ ＪＯＳＥＰＨ</div>
     <div class="profile-bio">
-  <div>𝖢𝖺𝗉𝗍𝗎𝗋𝗂𝗇𝗀 𝖼𝗈𝗅𝗈𝗋𝗌, 𝖾𝗆𝗈𝗍𝗂𝗈𝗇𝗌, 𝖺𝗇𝖽 𝗌𝗍𝗂𝗅𝗅𝗇𝖾𝗌𝗌</div>
-  <div>M𝗈𝗆𝖾𝗇𝗍𝗌 𝗍𝗁𝖺𝗍 𝗍𝖾𝗅𝗅 𝗌𝗍𝗈𝗋𝗂𝖾𝗌</div>
-</div>
+      <div>𝖢𝖺𝗉𝗍𝗎𝗋𝗂𝗇𝗀 𝖼𝗈𝗅𝗈𝗋𝗌, 𝖾𝗆𝗈𝗍𝗂𝗈𝗇𝗌, 𝖺𝗇𝖽 𝗌𝗍𝗂𝗅𝗅𝗇𝖾𝗌𝗌</div>
+      <div>M𝗈𝗆𝖾𝗇𝗍𝗌 𝗍𝗁𝖺𝗍 𝗍𝖾𝗅𝗅 𝗌𝗍𝗈𝗋𝗂𝖾𝗌</div>
+    </div>
   </div>
 
   <!-- Gallery Grid -->
@@ -331,42 +338,40 @@
   </div>
 
   <script>
-    // Sample image data
+    // Sample image data with fixed URLs
     const imageData = [
       { 
-    id: 1, 
-    url: 'pics/Snapseed (4).jpg', 
-    caption: 'Timeless textures, rustic tones — a quiet story told without a single word. 🐪🇰🇼✨' 
-  },
-      { id: 2, url: 'pics/Snapseed (3).jpg ', caption: 'When elegance framed in gold meets dim-lit stories untold⚜📜🕯' },
-      { id: 3, url: 'pics/FullSizeRender (8).jpg ', caption: 'Beneath a kaleidoscope ceiling, the fountain sings in silence. ✨🏛🌌' },
-      { id: 4, url: 'pics/FullSizeRender (7).jpg  ', caption: 'Renaissance vibes, reimagined in cyan. 🫧🗿🤎🎞' },
-      { id: 5, url: 'pics/Snapseed (2).jpg ', caption: 'Faded tales through lenses, time rests on velvet and ink. 🕰🪞🥀📜✨' },
-      { id: 6, url: 'pics/Snapseed (1).jpg ', caption: 'Golden dreams draped in art, blooms, and timeless elegance.⚜✨🥀' },
-      { id: 7, url: 'pics/FullSizeRender (6).jpg ', caption: 'Chiseled by time, silent in thought — a marble mood eternal. 🍂🗿🖤' },
-      { id: 8, url: 'pics/FullSizeRender (9).jpg  ', caption: '6 scoops. 6 moods. summer melting into memories.🍦✨' },
-      { id: 9, url: 'pics/IMG_4624.JPG ', caption: 'Every slice is a love letter to my taste buds. 🍕🤤' },
+        id: 1, 
+        url: 'pics/Snapseed (4).jpg', 
+        caption: 'Timeless textures, rustic tones — a quiet story told without a single word. 🐪🇰🇼✨' 
+      },
+      { id: 2, url: 'pics/Snapseed (3).jpg', caption: 'When elegance framed in gold meets dim-lit stories untold⚜📜🕯' },
+      { id: 3, url: 'pics/FullSizeRender (8).jpg', caption: 'Beneath a kaleidoscope ceiling, the fountain sings in silence. ✨🏛🌌' },
+      { id: 4, url: 'pics/FullSizeRender (7).jpg', caption: 'Renaissance vibes, reimagined in cyan. 🫧🗿🤎🎞' },
+      { id: 5, url: 'pics/Snapseed (2).jpg', caption: 'Faded tales through lenses, time rests on velvet and ink. 🕰🪞🥀📜✨' },
+      { id: 6, url: 'pics/Snapseed (1).jpg', caption: 'Golden dreams draped in art, blooms, and timeless elegance.⚜✨🥀' },
+      { id: 7, url: 'pics/FullSizeRender (6).jpg', caption: 'Chiseled by time, silent in thought — a marble mood eternal. 🍂🗿🖤' },
+      { id: 8, url: 'pics/FullSizeRender (9).jpg', caption: '6 scoops. 6 moods. summer melting into memories.🍦✨' },
+      { id: 9, url: 'pics/IMG_4624.JPG', caption: 'Every slice is a love letter to my taste buds. 🍕🤤' },
       { id: 10, url: 'pics/FullSizeRender (3).jpg', caption: 'Where water whispers secrets only nature knows. 🌿✨' },
-  { id: 11, url: 'pics/IMG_4625.JPG ', caption: 'Wildflowers bloom quietly as mountains fade into the mist.☁✨' },
-  { id: 12, url: 'pics/IMG_4623.JPG', caption: 'Where every embrace whispers love and safety. 🐒🤎' },
-  { id: 13, url: 'pics/IMG_3953.JPG', caption: 'Grace wrapped in petals and ribbons — a soft moment from a blessed baptism day.' },
-  { id: 14, url: 'pics/IMG_3808.JPG', caption: 'Just me, the silence, and a sky that doesn’t need stars.' },
-  { id: 15, url: 'pics/IMG_0477.JPG', caption: 'Soft blooms, cool hues, and quiet corners — where time slows down and colors speak🥀.' },
-  { id: 16, url: 'pics/IMG_4699.JPG', caption: 'Raindrops linger, blurring greens and blues into quiet calm.' },
-  { id: 17, url: 'pics/IMG_5871.JPG', caption: 'Where colors dance and stories breathe — Kerala’s timeless spirit in a frame.' },
-  { id: 18, url: 'pics/IMG_3922.JPG', caption: 'Somewhere between earth and monochrome skies, where time slows down and thoughts get lighter.' },
-  { id: 19, url: 'pics/Snapseed (5).jpg', caption: 'Tea gardens kissed by morning mist☀.' },
-  { id: 20, url: 'pics/IMG_0496.JPG', caption: 'A slice of happiness layered with red velvet & cheesecake magic🍰 — sweet moments.' },
-  { id: 21, url: 'pics/IMG_2700.JPG', caption: 'Chasing the sunrise, one altitude at a time. Golden horizons and quiet skies.' },
-  { id: 22, url: 'pics/IMG_3727.JPG', caption: 'Drenched in purple dreams — where every bloom whispers calm and chaos all at once.' },
-  { id: 23, url: 'pics/IMG_4622.JPG', caption: 'Golden tuskers🐘, burning flames, and beats of tradition — Thrissur Pooram magic captured.' },
-  { id: 24, url: 'pics/Snapseed.jpg', caption: 'Signed by the sea, sealed with a wave. 🌊✍️☀️' },
-  { id: 25, url: 'pics/IMG_4605.JPG', caption: 'Spinning stories under a sunset sky—where the sea listens and the lights begin to sing. 🌇🎡💫' },
-  { id: 26, url: 'pics/FullSizeRender.jpg', caption: 'Cruising altitude comfort. ✈️😴🎶' },
-  { id: 27, url: 'pics/IMG_4573.JPG', caption: 'Rain on the runway, wanderlust in my veins. 🛫🌧️🌍 ' },
-  { id: 28, url: 'pics/FullSizeRender (2).jpg', caption: 'Caught him living the sweet life. 🍦🙈🌿' }
-  
-  
+      { id: 11, url: 'pics/IMG_4625.JPG', caption: 'Wildflowers bloom quietly as mountains fade into the mist.☁✨' },
+      { id: 12, url: 'pics/IMG_4623.JPG', caption: 'Where every embrace whispers love and safety. 🐒🤎' },
+      { id: 13, url: 'pics/IMG_3953.JPG', caption: 'Grace wrapped in petals and ribbons — a soft moment from a blessed baptism day.' },
+      { id: 14, url: 'pics/IMG_3808.JPG', caption: 'Just me, the silence, and a sky that doesn’t need stars.' },
+      { id: 15, url: 'pics/IMG_0477.JPG', caption: 'Soft blooms, cool hues, and quiet corners — where time slows down and colors speak🥀.' },
+      { id: 16, url: 'pics/IMG_4699.JPG', caption: 'Raindrops linger, blurring greens and blues into quiet calm.' },
+      { id: 17, url: 'pics/IMG_5871.JPG', caption: 'Where colors dance and stories breathe — Kerala’s timeless spirit in a frame.' },
+      { id: 18, url: 'pics/IMG_3922.JPG', caption: 'Somewhere between earth and monochrome skies, where time slows down and thoughts get lighter.' },
+      { id: 19, url: 'pics/Snapseed (5).jpg', caption: 'Tea gardens kissed by morning mist☀.' },
+      { id: 20, url: 'pics/IMG_0496.JPG', caption: 'A slice of happiness layered with red velvet & cheesecake magic🍰 — sweet moments.' },
+      { id: 21, url: 'pics/IMG_2700.JPG', caption: 'Chasing the sunrise, one altitude at a time. Golden horizons and quiet skies.' },
+      { id: 22, url: 'pics/IMG_3727.JPG', caption: 'Drenched in purple dreams — where every bloom whispers calm and chaos all at once.' },
+      { id: 23, url: 'pics/IMG_4622.JPG', caption: 'Golden tuskers🐘, burning flames, and beats of tradition — Thrissur Pooram magic captured.' },
+      { id: 24, url: 'pics/Snapseed.jpg', caption: 'Signed by the sea, sealed with a wave. 🌊✍️☀️' },
+      { id: 25, url: 'pics/IMG_4605.JPG', caption: 'Spinning stories under a sunset sky—where the sea listens and the lights begin to sing. 🌇🎡💫' },
+      { id: 26, url: 'pics/FullSizeRender.jpg', caption: 'Cruising altitude comfort. ✈️😴🎶' },
+      { id: 27, url: 'pics/IMG_4573.JPG', caption: 'Rain on the runway, wanderlust in my veins. 🛫🌧️🌍 ' },
+      { id: 28, url: 'pics/FullSizeRender (2).jpg', caption: 'Caught him living the sweet life. 🍦🙈🌿' }
     ];
 
     let scrollPosition = 0;
@@ -390,9 +395,9 @@
       // Skeleton loader
       const skeleton = document.createElement('div');
       skeleton.style.width = '100%';
-      skeleton.style.aspectRatio = '3/4';
+      skeleton.style.height = '100%';
       skeleton.style.background = 'linear-gradient(90deg, #222 25%, #333 50%, #222 75%)';
-      skeleton.style.backgroundSize = '400% 400%';
+      skeleton.style.backgroundSize = '200% 100%';
       skeleton.style.animation = 'shimmer 1.5s infinite linear';
       skeleton.style.borderRadius = '12px';
       wrapper.appendChild(skeleton);
@@ -409,6 +414,13 @@
         skeleton.remove();
         img.style.display = 'block';
         wrapper.appendChild(img);
+      };
+      
+      // Handle image error
+      img.onerror = () => {
+        console.error('Failed to load image:', item.url);
+        skeleton.style.background = '#333';
+        skeleton.innerHTML = '<div style="color:white;text-align:center;padding:10px;">Image failed to load</div>';
       };
       
       // Ripple effect
@@ -433,19 +445,33 @@
       return wrapper;
     }
 
-    // Render gallery
+    // Render gallery with balanced columns
     function renderGallery() {
       leftColumn.innerHTML = '';
       rightColumn.innerHTML = '';
       
+      // Track cumulative height of columns
+      let leftHeight = 0;
+      let rightHeight = 0;
+      
       imageData.forEach((item, index) => {
         const wrapper = createImageElement(item, index);
         
-        // Alternate between columns
-        if (index % 2 === 0) {
+        // Create a mock element to estimate height
+        const mockElement = document.createElement('div');
+        mockElement.style.width = '100%';
+        mockElement.style.paddingBottom = '133.33%'; // 3:4 aspect ratio
+        document.body.appendChild(mockElement);
+        const estimatedHeight = mockElement.offsetHeight;
+        document.body.removeChild(mockElement);
+        
+        // Decide which column to add to
+        if (index % 2 === 0 || (index === imageData.length - 1 && leftHeight <= rightHeight)) {
           leftColumn.appendChild(wrapper);
+          leftHeight += estimatedHeight;
         } else {
           rightColumn.appendChild(wrapper);
+          rightHeight += estimatedHeight;
         }
       });
     }
@@ -497,6 +523,10 @@
     }
 
     // Handle swipe gestures
+    let startX = 0;
+    let startY = 0;
+    let isSwiping = false;
+
     function handleTouchStart(e) {
       if (isSingleView) {
         startX = e.touches[0].clientX;
@@ -558,25 +588,6 @@
 
     // Initialize on load
     window.addEventListener('load', renderGallery);
-
-    // Resize handler
-    window.addEventListener('resize', () => {
-      if (!isSingleView) {
-        const tempLeft = Array.from(leftColumn.children);
-        const tempRight = Array.from(rightColumn.children);
-        
-        leftColumn.innerHTML = '';
-        rightColumn.innerHTML = '';
-        
-        [...tempLeft, ...tempRight].forEach((child, index) => {
-          if (index % 2 === 0) {
-            leftColumn.appendChild(child);
-          } else {
-            rightColumn.appendChild(child);
-          }
-        });
-      }
-    });
   </script>
 </body>
 </html>
